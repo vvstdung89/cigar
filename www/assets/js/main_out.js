@@ -346,6 +346,7 @@
         msg.setUint8(0, 254);
         msg.setUint32(1, 5, true); // Protocol 5
         wsSend(msg);
+        sendUserID("testdata");
         msg = prepareData(5);
         msg.setUint8(0, 255);
         msg.setUint32(1, 0, true);
@@ -677,6 +678,15 @@
             var msg = prepareData(1 + 2 * userNickName.length);
             msg.setUint8(0, 0);
             for (var i = 0; i < userNickName.length; ++i) msg.setUint16(1 + 2 * i, userNickName.charCodeAt(i), true);
+            wsSend(msg);
+        }
+    }
+
+    function sendUserID(uid) {
+        if (wsIsOpen()) {
+            var msg = prepareData(1 + 2 * uid.length);
+            msg.setUint8(0, 253);
+            for (var i = 0; i < uid.length; ++i) msg.setUint16(1 + 2 * i, uid.charCodeAt(i), true);
             wsSend(msg);
         }
     }
