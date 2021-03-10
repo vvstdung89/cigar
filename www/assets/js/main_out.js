@@ -1,6 +1,11 @@
 (function (wHandle, wjQuery) {
     var CONNECTION_URL = "127.0.0.1:4438", // Default Connection
         SKIN_URL = "./skins/"; // Skin Directory
+    var HOME_PAGE = "http://139.162.54.236:5000/";
+
+    if (!getCookie("token")){
+        window.location.href=HOME_PAGE
+    }
 
     wHandle.setserver = function (arg) {
         if (arg != CONNECTION_URL) {
@@ -8,6 +13,18 @@
             showConnecting();
         }
     };
+
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
 
     var touchX,
         touchY,
@@ -346,7 +363,7 @@
         msg.setUint8(0, 254);
         msg.setUint32(1, 5, true); // Protocol 5
         wsSend(msg);
-        sendUserID("testdata");
+        sendUserID(getCookie("token"));
         msg = prepareData(5);
         msg.setUint8(0, 255);
         msg.setUint32(1, 0, true);
@@ -463,6 +480,9 @@
             case 99:
                 addChat(msg, offset);
                 break;
+            case 101:
+                window.location.href = HOME_PAGE
+                break
         }
     }
 
@@ -679,6 +699,7 @@
             msg.setUint8(0, 0);
             for (var i = 0; i < userNickName.length; ++i) msg.setUint16(1 + 2 * i, userNickName.charCodeAt(i), true);
             wsSend(msg);
+            console.log(msg)
         }
     }
 
@@ -688,6 +709,7 @@
             msg.setUint8(0, 253);
             for (var i = 0; i < uid.length; ++i) msg.setUint16(1 + 2 * i, uid.charCodeAt(i), true);
             wsSend(msg);
+            console.log(msg)
         }
     }
 
