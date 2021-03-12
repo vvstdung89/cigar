@@ -1,6 +1,6 @@
 (function (wHandle, wjQuery) {
     var CONNECTION_URL = "127.0.0.1:4438", // Default Connection
-        SKIN_URL = "./skins/"; // Skin Directory
+        USER_SKIN_URL = "/skin/"; // Skin Directory
     var HOME_PAGE = "http://139.162.54.236:5000/";
 
     if (!getCookie("token")){
@@ -615,8 +615,8 @@
             if (flags & 4) {
                 for (;;) {
                     // skin name
-                    t = view.getUint8(offset, true) & 0x7f;
-                    offset += 1;
+                    t = view.getUint16(offset, true);
+                    offset += 2;
                     if (0 == t) break;
                     _skin += String.fromCharCode(t);
                 }
@@ -638,6 +638,7 @@
                 node.oy = node.y;
                 node.oSize = node.size;
                 node.color = colorstr;
+                node._skin =  _skin
             } else {
                 node = new Cell(nodeid, posX, posY, size, colorstr, name, _skin);
                 nodelist.push(node);
@@ -655,6 +656,7 @@
             node.updateTime = timestamp;
             node.flag = flags;
             name && node.setName(name);
+
             if (-1 != nodesOnScreen.indexOf(nodeid) && -1 == playerCells.indexOf(node)) {
                 document.getElementById("overlays").style.display = "none";
                 playerCells.push(node);
@@ -699,7 +701,15 @@
             msg.setUint8(0, 0);
             for (var i = 0; i < userNickName.length; ++i) msg.setUint16(1 + 2 * i, userNickName.charCodeAt(i), true);
             wsSend(msg);
-            console.log(msg)
+        }
+    }
+
+    function sendSkinName(skinName) {
+        if (wsIsOpen() && null != skinName) {
+            var msg = prepareData(1 + 2 * skinName.length);
+            msg.setUint8(0, 2);
+            for (var i = 0; i < skinName.length; ++i) msg.setUint16(1 + 2 * i, skinName.charCodeAt(i), true);
+            wsSend(msg);
         }
     }
 
@@ -1073,6 +1083,11 @@
     var wCanvas = document.createElement("canvas");
     var playerStat = null;
     wHandle.isSpectating = false;
+
+    wHandle.setSkinName = function(arg) {
+        sendSkinName(arg)
+    }
+
     wHandle.setNick = function (arg) {
         hideOverlays();
         userNickName = arg;
@@ -1116,7 +1131,7 @@
     };
     wHandle.openSkinsList = function (arg) {
         if ($("#inPageModalTitle").text() != "Skins") {
-            $.get("include/gallery.php").then(function (data) {
+            $.get("list_skin").then(function (data) {
                 $("#inPageModalTitle").text("Skins");
                 $("#inPageModalBody").html(data);
             });
@@ -1152,24 +1167,6 @@
     };
     wHandle.connect = wsConnect;
 
-    var data = {
-        action: "test",
-    };
-    wjQuery.ajax({
-        type: "POST",
-        dataType: "json",
-        url: "checkdir.php",
-        data: data,
-        success: function (data) {
-            response = JSON.parse(data["names"]);
-            for (var i = 0; i < response.length; i++) {
-                if (-1 == knownNameDict.indexOf(response[i])) {
-                    knownNameDict.push(response[i]);
-                }
-            }
-        },
-    });
-
     var delay = 500,
         oldX = -1,
         oldY = -1,
@@ -1177,8 +1174,6 @@
         z = 1,
         scoreText = null,
         skins = {},
-        knownNameDict = "".split(";"),
-        knownNameDict_noDisp = [],
         ib = ["_canvas'blob"];
     Cell.prototype = {
         id: 0,
@@ -1400,24 +1395,21 @@
                     }
                 }
                 ctx.closePath();
-                var skinName = this.name.toLowerCase();
+                var skinName = "";
 
                 // Load Premium skin if we have one set
                 if (typeof this._skin != "undefined" && this._skin != "") {
-                    if (this._skin[0] == "%") {
-                        skinName = this._skin.substring(1);
-                    }
+                    skinName = this._skin
                 }
 
                 if (bot) {
-                    skinName = skinName.replaceAll("%","")
+                    skinName = this.name.replaceAll("%","")
                 }
 
-
-                if (showSkin && skinName != "" && -1 != knownNameDict.indexOf(skinName)) {
+                if (showSkin && skinName != "") {
                     if (!skins.hasOwnProperty(skinName)) {
                         skins[skinName] = new Image();
-                        skins[skinName].src = SKIN_URL + skinName + ".png";
+                        skins[skinName].src = USER_SKIN_URL + skinName;
                     }
                     if (0 != skins[skinName].width && skins[skinName].complete) {
                         c = skins[skinName];
@@ -1453,7 +1445,7 @@
                         nz = this.getNameSize(),
                         ratio = Math.ceil(10 * viewZoom) * 0.1,
                         ratD = 1 / ratio;
-                    if ((showName || c) && this.name && this.nameCache && (null == e || -1 == knownNameDict_noDisp.indexOf(skinName))) {
+                    if ((showName || c) && this.name && this.nameCache && (null == e)) {
                         ncache = this.nameCache;
                         ncache.setValue(this.name);
                         ncache.setSize(nz);
