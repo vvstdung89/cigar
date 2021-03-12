@@ -3,6 +3,7 @@ const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
 /**
  * Environment vars
@@ -20,6 +21,8 @@ app.set("view engine", "ejs");
 //set up express
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use('/assets', express.static(path.join(__dirname, './public/assets'), {maxAge: 31557600000}));
 
 /**
  * Routers

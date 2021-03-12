@@ -18,6 +18,11 @@ RUN apt-get install -y nginx
 # Remove the default Nginx configuration file
 RUN rm -v /etc/nginx/nginx.conf
 
+WORKDIR /cigar
+COPY . .
+RUN cd /cigar/app \
+    && npm install
+
 # Copy a configuration file from the current directory
 ADD run.sh /run.sh
 
