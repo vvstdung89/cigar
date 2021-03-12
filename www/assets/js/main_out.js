@@ -1167,6 +1167,7 @@
     };
     wHandle.connect = wsConnect;
 
+
     var delay = 500,
         oldX = -1,
         oldY = -1,
@@ -1445,7 +1446,8 @@
                         nz = this.getNameSize(),
                         ratio = Math.ceil(10 * viewZoom) * 0.1,
                         ratD = 1 / ratio;
-                    if ((showName || c) && this.name && this.nameCache && (null == e)) {
+                    
+                    if ((showName || c) && this.name && this.nameCache && (null != e)) {
                         ncache = this.nameCache;
                         ncache.setValue(this.name);
                         ncache.setSize(nz);
