@@ -1,6 +1,6 @@
 (function (wHandle, wjQuery) {
     var CONNECTION_URL = "127.0.0.1:4438", // Default Connection
-        USER_SKIN_URL = "/skin/"; // Skin Directory
+        USER_SKIN_URL = "/assets/img/skins/"; // Skin Directory
     var HOME_PAGE = "http://139.162.54.236:5000/";
 
     if (!getCookie("token")){
@@ -1410,7 +1410,7 @@
                 if (showSkin && skinName != "") {
                     if (!skins.hasOwnProperty(skinName)) {
                         skins[skinName] = new Image();
-                        skins[skinName].src = USER_SKIN_URL + skinName;
+                        skins[skinName].src = USER_SKIN_URL + skinName + '.png';
                     }
                     if (0 != skins[skinName].width && skins[skinName].complete) {
                         c = skins[skinName];

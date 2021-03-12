@@ -1,3 +1,3 @@
-cp /nginx/nginx.conf /etc/nginx/nginx.conf
+cp /cigar/nginx/nginx.conf /etc/nginx/nginx.conf
 service nginx start
-node /app/index.js
+node /cigar/app/index.js

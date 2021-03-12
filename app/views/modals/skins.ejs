@@ -1,0 +1,11 @@
+<link href="/assets/css/gallery.css" rel="stylesheet">
+<div class="row center">
+    <ul>
+        <% skins.forEach(function(skin){ %>
+            <li class="skin" onclick="window.setSkinName($(this).find('.title').text());" data-dismiss="modal">
+                <div class="circular" style='background-image: url("<%=skin.imgSrc%>")'></div>
+                <h4 class="title"><%=skin.name%></h4>
+            </li>
+        <% }); %>
+    </ul>
+</div>
