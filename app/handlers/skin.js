@@ -2,12 +2,17 @@ const fs = require("fs");
 const JWTUtil = require('../utils/jwt');
 const GravatarUtil = require('../utils/GravatarUtil');
 
-const SKINS = ["btc", "prv", "doge"]
+const SKINS = [
+    "btc",
+    "prv",
+    "doge",
+    "minion",
+    "stonks",
+    "bonk",
+    "honk",
+]
 
 function list(req, res) {
-    //TODO: list skin base on SKINS constant
-    //TODO: using req.header.cookie to extract email and add 1 more skin base on gravatar (at the beginning of the list)
-    //TODO: add more skin
 
     const skinsList = SKINS.map(skin => {
         return {
