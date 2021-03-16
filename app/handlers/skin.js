@@ -61,7 +61,20 @@ function get(req, res) {
 
 }
 
+function getGravatarSkinImage(req, res) {
+    const userGravatarSkin = _getUserGravatarSkinFromCookies(req);
+
+    if (userGravatarSkin) {
+        res.redirect(userGravatarSkin.imgSrc);
+    }
+    else {
+        res.redirect(`/assets/img/skins/prv.png`);
+    }
+
+}
+
 module.exports = {
     get,
     list,
+    getGravatarSkinImage
 };
