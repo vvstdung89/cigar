@@ -1,7 +1,7 @@
 (function (wHandle, wjQuery) {
-    var CONNECTION_URL = "127.0.0.1:4438", // Default Connection
+    var CONNECTION_URL = "gs.cryptocombat.incognito.corncob.dev:4438", // Default Connection
         USER_SKIN_URL = "/assets/img/skins/"; // Skin Directory
-    var HOME_PAGE = "http://139.162.54.236:5000/";
+    var HOME_PAGE = "https://cryptocombat.incognito.corncob.dev/";
 
     if (!getCookie("token")){
         window.location.href=HOME_PAGE
